@@ -9,13 +9,16 @@
 import UIKit
 import CoreData
 
+
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
     var managedObjectContext: NSManagedObjectContext? = nil
     
-    //var fetchedResultsController = CoreDataManager.sharedInstance
+    var manager: CoreDataManager!
     
-    var _fetchedResultsController: NSFetchedResultsController? = nil
+    //var _fetchedResultsController: NSFetchedResultsController? = nil
+    
+    var projetoArray: NSMutableArray!
 
 
     override func awakeFromNib() {
@@ -25,10 +28,19 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        //projetoArray = self.manager.fetchDataForEntity("Projeto", predicate:nil)
+        manager = CoreDataManager.sharedInstance
+        
+        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "TRUEPREDICATE")))
+        
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
         self.navigationItem.rightBarButtonItem = addButton
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "TRUEPREDICATE")))
     }
 
     override func didReceiveMemoryWarning() {
@@ -37,14 +49,17 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     func insertNewObject(sender: AnyObject) {
-        let context = self.fetchedResultsController.managedObjectContext
-        let entity = self.fetchedResultsController.fetchRequest.entity!
-        let newManagedObject = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context) as! NSManagedObject
-             
-        // If appropriate, configure the new managed object.
-        // Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.
-        newManagedObject.setValue(NSDate(), forKey: "timeStamp")
-             
+        let context = self.manager.context
+        //let entity = self.fetchedResultsController.fetchRequest.entity!
+        let novoProjeto: NSManagedObject = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: context) as! NSManagedObject
+        
+        novoProjeto.setValue("blablabla", forKey: "nome")
+        
+        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "TRUEPREDICATE")))
+        
+        self.tableView.reloadData()
+
+        
         // Save the context.
         var error: NSError? = nil
         if !context.save(&error) {
@@ -57,24 +72,23 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     // MARK: - Segues
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow() {
-            let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
-            (segue.destinationViewController as! DetailViewController).detailItem = object
-            }
-        }
-    }
+//    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+//        if segue.identifier == "showDetail" {
+//            if let indexPath = self.tableView.indexPathForSelectedRow() {
+//            let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
+//            (segue.destinationViewController as! DetailViewController).detailItem = object
+//            }
+//        }
+//    }
 
     // MARK: - Table View
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return self.fetchedResultsController.sections?.count ?? 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
-        return sectionInfo.numberOfObjects
+        return projetoArray.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -90,8 +104,13 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            let context = self.fetchedResultsController.managedObjectContext
-            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            let context = self.manager.context
+            let predicate: NSPredicate = NSPredicate(format: "nome = %@", projetoArray.objectAtIndex(indexPath.row).valueForKey("nome") as! String)
+            let results = manager.fetchDataForEntity("Projeto", predicate: predicate)
+            let objeto: NSManagedObject = results.firstObject as! NSManagedObject
+            context.deleteObject(objeto)
+            projetoArray.removeObjectAtIndex(indexPath.row)
+            self.tableView.reloadData()
                 
             var error: NSError? = nil
             if !context.save(&error) {
@@ -104,47 +123,47 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
-            let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
-        cell.textLabel!.text = object.valueForKey("timeStamp")!.description
+        let esseProjeto: NSManagedObject = projetoArray.objectAtIndex(indexPath.row) as! NSManagedObject
+        cell.textLabel!.text = esseProjeto.valueForKey("nome") as! String
     }
 
     // MARK: - Fetched results controller
 
-    var fetchedResultsController: NSFetchedResultsController {
-        if _fetchedResultsController != nil {
-            return _fetchedResultsController!
-        }
-        
-        let fetchRequest = NSFetchRequest()
-        // Edit the entity name as appropriate.
-        let entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext!)
-        fetchRequest.entity = entity
-        
-        // Set the batch size to a suitable number.
-        fetchRequest.fetchBatchSize = 20
-        
-        // Edit the sort key as appropriate.
-        let sortDescriptor = NSSortDescriptor(key: "timeStamp", ascending: false)
-        let sortDescriptors = [sortDescriptor]
-        
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        
-        // Edit the section name key path and cache name if appropriate.
-        // nil for section name key path means "no sections".
-        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: "Master")
-        aFetchedResultsController.delegate = self
-        _fetchedResultsController = aFetchedResultsController
-        
-    	var error: NSError? = nil
-    	if !_fetchedResultsController!.performFetch(&error) {
-    	     // Replace this implementation with code to handle the error appropriately.
-    	     // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-             //println("Unresolved error \(error), \(error.userInfo)")
-    	     abort()
-    	}
-        
-        return _fetchedResultsController!
-    }    
+//    var fetchedResultsController: NSFetchedResultsController {
+//        if _fetchedResultsController != nil {
+//            return _fetchedResultsController!
+//        }
+//        
+//        let fetchRequest = NSFetchRequest()
+//        // Edit the entity name as appropriate.
+//        let entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext!)
+//        fetchRequest.entity = entity
+//        
+//        // Set the batch size to a suitable number.
+//        fetchRequest.fetchBatchSize = 20
+//        
+//        // Edit the sort key as appropriate.
+//        let sortDescriptor = NSSortDescriptor(key: "timeStamp", ascending: false)
+//        let sortDescriptors = [sortDescriptor]
+//        
+//        fetchRequest.sortDescriptors = [sortDescriptor]
+//        
+//        // Edit the section name key path and cache name if appropriate.
+//        // nil for section name key path means "no sections".
+//        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: "Master")
+//        aFetchedResultsController.delegate = self
+//        _fetchedResultsController = aFetchedResultsController
+//        
+//    	var error: NSError? = nil
+//    	if !_fetchedResultsController!.performFetch(&error) {
+//    	     // Replace this implementation with code to handle the error appropriately.
+//    	     // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+//             //println("Unresolved error \(error), \(error.userInfo)")
+//    	     abort()
+//    	}
+//        
+//        return _fetchedResultsController!
+//    }    
     
 
     func controllerWillChangeContent(controller: NSFetchedResultsController) {

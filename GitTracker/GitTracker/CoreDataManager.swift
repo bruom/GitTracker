@@ -25,7 +25,8 @@ class CoreDataManager: NSObject {
         request.entity = description
         
         let error: NSErrorPointer = NSErrorPointer()
-        let resultSet: NSArray = context.executeFetchRequest(request, error: error)!
+        
+        let resultSet: NSArray = self.context.executeFetchRequest(request, error: error)!
         
         //tratar erro
         if error != nil {
