@@ -12,6 +12,10 @@ import CoreData
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
     var managedObjectContext: NSManagedObjectContext? = nil
+    
+    //var fetchedResultsController = CoreDataManager.sharedInstance
+    
+    var _fetchedResultsController: NSFetchedResultsController? = nil
 
 
     override func awakeFromNib() {
@@ -141,7 +145,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         return _fetchedResultsController!
     }    
-    var _fetchedResultsController: NSFetchedResultsController? = nil
+    
 
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         self.tableView.beginUpdates()
