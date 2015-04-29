@@ -18,7 +18,9 @@ class GitSearch: NSObject {
         self.searchURL(url1, arrayLocal: arrayUsuario)
         self.searchURL(url2, arrayLocal: arrayMackMobile)
         
-        self.interseccao(arrayUsuario, array2: arrayMackMobile)
+        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
+        self.validarPull(arrayIntersec)
+        
     }
     
     static func geralSearch(url: String) -> AnyObject{
@@ -70,11 +72,36 @@ class GitSearch: NSObject {
                 if splitString.last == split2.last{
                     println("SAO IGUAIS!!!")
                     println(splitString.last)
+                    arraySaida.addObject(splitString.last!)
                 }
             }
         }
+        println("***")
         return arraySaida
+    }
+    
+    static func validarPull(arrayLocal: NSMutableArray) -> Void{
+        var arrayPulls = NSMutableArray()
         
+        for repositorio in arrayLocal
+        {
+            println("Entrou")
+            var url = "https://api.github.com/repos/mackmobile/\(repositorio)/issues"
+            let resultado: AnyObject = self.geralSearch(url)
+            let repositorio:NSArray = resultado.allObjects
+            for pullR in repositorio {
+                let pullRequest = pullR as! NSDictionary
+                if let user = pullRequest["user"] as? NSDictionary{
+                    if let login = user["login"] as? String{
+                        if login == "Andre113" {
+                            println("Adicionar")
+                            arrayPulls.addObject(pullRequest)
+                        }
+                    }
+                }
+            }
+            println("**************")
+        }
     }
     
     //    func searchOwner(){
