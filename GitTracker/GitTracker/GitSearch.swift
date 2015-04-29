@@ -9,7 +9,7 @@
 import Foundation
 
 class GitSearch: NSObject {
-    func main() {
+    static func teste() {
         var arrayUsuario = NSMutableArray()
         var arrayMackMobile = NSMutableArray()
         
@@ -21,7 +21,7 @@ class GitSearch: NSObject {
         self.interseccao(arrayUsuario, array2: arrayMackMobile)
     }
     
-    func geralSearch(url: String) -> AnyObject{
+    static func geralSearch(url: String) -> AnyObject{
         let urlSearch:NSURL = NSURL(string: url)!
         if let jsonData: NSData = NSData(contentsOfURL: urlSearch){
             var error:NSErrorPointer = NSErrorPointer()
@@ -36,7 +36,7 @@ class GitSearch: NSObject {
         }
     }
     
-    func searchURL(url: String, arrayLocal: NSMutableArray){
+    static func searchURL(url: String, arrayLocal: NSMutableArray){
         //        let urlString:String = "https://api.github.com/users/Andre113/repos"
         //        let urlString: String = "file:///Users/AndreLucas/Documents/repos.html"
         //        let urlSearch:NSURL = NSURL(string: urlString)!
@@ -60,9 +60,20 @@ class GitSearch: NSObject {
         //        self.searchOwner()
     }
     
-    func interseccao(array1: NSMutableArray, array2: NSMutableArray) -> NSMutableArray{
+    static func interseccao(array1: NSMutableArray, array2: NSMutableArray) -> NSMutableArray{
         var arraySaida = NSMutableArray()
         
+        for cadaUrl in array1 {
+            var splitString:[String] = cadaUrl.componentsSeparatedByString("/") as! [String]
+            for cadaOutraUrl in array2 {
+                var split2:[String] = cadaOutraUrl.componentsSeparatedByString("/") as! [String]
+                if splitString.last == split2.last{
+                    println("SAO IGUAIS!!!")
+                    println(splitString.last)
+                }
+            }
+        }
+        return arraySaida
         
     }
     

@@ -37,6 +37,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
         self.navigationItem.rightBarButtonItem = addButton
+        
+        GitSearch.teste()
     }
     
     override func viewWillAppear(animated: Bool) {
