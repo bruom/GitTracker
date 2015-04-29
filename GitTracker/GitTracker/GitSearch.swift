@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class GitSearch: NSObject {
     
@@ -24,7 +25,13 @@ class GitSearch: NSObject {
         self.searchURL(url2, arrayLocal: arrayMackMobile)
         
         var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
-        self.validarPull(arrayIntersec)
+        var validados = self.validarPull(arrayIntersec)
+        
+        var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
+        for label in labels {
+            println(label["name"] as! String)
+            println(label["url"] as! String)
+        }
     }
     
     static func geralSearch(url: String) -> AnyObject{
@@ -108,7 +115,20 @@ class GitSearch: NSObject {
         return arrayPulls
     }
     
-    static func buscarLabel(pullRequest: NSDictionary) -> NSMutableArray{
-        return NSMutableArray()
+    static func buscarLabel(pullRequest: NSDictionary) -> NSArray{
+        var arraySaida = NSMutableArray()
+        
+        let labels: NSArray = pullRequest["labels"] as! NSArray
+        
+        
+//        for eachLabel in labels{
+//            let label: NSDictionary = eachLabel as! NSDictionary
+//            let newLabel = LabelT()
+//            newLabel.desc = eachLabel["name"] as! String
+//            newLabel.cor = eachLabel["color"] as! String
+//            arraySaida.addObject(newLabel)
+//        }
+        
+        return labels
     }
 }
