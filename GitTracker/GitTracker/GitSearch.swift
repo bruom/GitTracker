@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class GitSearch: NSObject {
     
@@ -25,13 +26,42 @@ class GitSearch: NSObject {
         self.searchURL(url2, arrayLocal: arrayMackMobile)
         
         var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
-        var validados = self.validarPull(arrayIntersec)
+        var validados = self.validarPull(arrayIntersec, username:"Andre113")
         
         var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
         for label in labels {
             println(label["name"] as! String)
             println(label["url"] as! String)
         }
+    }
+    
+    static func preencheDados(username:String){
+        var dados:NSMutableArray = NSMutableArray()
+        
+        var arrayUsuario = NSMutableArray()
+        var arrayMackMobile = NSMutableArray()
+        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+        var url1 = "https://api.github.com/users/\(username)/repos\(auth)"
+        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
+        self.searchURL(url1, arrayLocal: arrayUsuario)
+        self.searchURL(url2, arrayLocal: arrayMackMobile)
+        
+        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
+        var validados = self.validarPull(arrayIntersec, username: username)
+        
+        for validadoArray in validados {
+            var validado = validadoArray as! NSDictionary
+            var projeto:Projeto = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Projeto
+            let url = validado.objectForKey("url")
+            let arr:[String] = url!.componentsSeparatedByString("/") as! [String]
+                
+            projeto.nome = arr[arr.count-3]
+            projeto.user = ((validado.objectForKey("user"))?.objectForKey("login") as? String)!
+        }
+        
+        CoreDataManager.sharedInstance.saveContext()
+        var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
+        
     }
     
     static func geralSearch(url: String) -> AnyObject{
@@ -91,7 +121,7 @@ class GitSearch: NSObject {
         return arraySaida
     }
     
-    static func validarPull(arrayLocal: NSMutableArray) -> NSMutableArray{
+    static func validarPull(arrayLocal: NSMutableArray, username:String) -> NSMutableArray{
         let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
         var arrayPulls = NSMutableArray()
         
@@ -103,7 +133,7 @@ class GitSearch: NSObject {
                 let pullRequest = pullR as! NSDictionary
                 if let user = pullRequest["user"] as? NSDictionary{
                     if let login = user["login"] as? String{
-                        if login == "Andre113" {
+                        if login == username {
 //                            println("Adicionar")
                             arrayPulls.addObject(pullRequest)
                         }
