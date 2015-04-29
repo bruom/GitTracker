@@ -7,18 +7,31 @@
 //
 
 import Foundation
+import UIKit
 
 class GitSearch: NSObject {
+    
+    let clientID = "5b018f27daf42c91a1da"
+    let clientSecret = "15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+    
+    
     static func teste() {
         var arrayUsuario = NSMutableArray()
         var arrayMackMobile = NSMutableArray()
-        
-        var url1 = "file:///Users/AndreLucas/Documents/HTML/reposAndre113.html"
-        var url2 = "file:///Users/AndreLucas/Documents/HTML/reposMackMobile.html"
+        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+        var url1 = "https://api.github.com/users/Andre113/repos\(auth)"
+        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
         self.searchURL(url1, arrayLocal: arrayUsuario)
         self.searchURL(url2, arrayLocal: arrayMackMobile)
         
-        self.interseccao(arrayUsuario, array2: arrayMackMobile)
+        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
+        var validados = self.validarPull(arrayIntersec)
+        
+        var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
+        for label in labels {
+            println(label["name"] as! String)
+            println(label["url"] as! String)
+        }
     }
     
     static func geralSearch(url: String) -> AnyObject{
@@ -56,7 +69,7 @@ class GitSearch: NSObject {
                 println(url)
             }
         }
-        println("***")
+//        println("***")
         //        self.searchOwner()
     }
     
@@ -68,35 +81,54 @@ class GitSearch: NSObject {
             for cadaOutraUrl in array2 {
                 var split2:[String] = cadaOutraUrl.componentsSeparatedByString("/") as! [String]
                 if splitString.last == split2.last{
-                    println("SAO IGUAIS!!!")
-                    println(splitString.last)
+//                    println("SAO IGUAIS!!!")
+//                    println(splitString.last)
+                    arraySaida.addObject(splitString.last!)
                 }
             }
         }
+//        println("***")
         return arraySaida
-        
     }
     
-    //    func searchOwner(){
-    ////        for url: String in self.arrayRepositorio{
-    ////            let urlSearch:NSURL = NSURL(string: url)!
-    ////            if let jsonData: NSData = NSData(contentsOfURL: urlSearch{
-    ////            var error:NSErrorPointer = NSErrorPointer()
-    //        var url: String = "file:///Users/AndreLucas/Documents/insideRepos.html"
-    //
-    //        let resultado: AnyObject = (self.geralSearch(url) as? AnyObject)!
-    //            if let parent = resultado["parent"] as? NSDictionary{
-    //                if let owner = parent["owner"] as? NSDictionary{
-    //                    if let login = owner["login"] as? String{
-    //                        println(login)
-    //                        if (login == "mackmobile"){
-    //                            println("Nome válido, coloca no array")
-    //                            self.arrayRepositorio.append(url)
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    ////    }
-
+    static func validarPull(arrayLocal: NSMutableArray) -> NSMutableArray{
+        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+        var arrayPulls = NSMutableArray()
+        
+        for repositorio in arrayLocal{
+            var url = "https://api.github.com/repos/mackmobile/\(repositorio)/issues\(auth)"
+            let resultado: AnyObject = self.geralSearch(url)
+            let repositorio:NSArray = resultado.allObjects
+            for pullR in repositorio {
+                let pullRequest = pullR as! NSDictionary
+                if let user = pullRequest["user"] as? NSDictionary{
+                    if let login = user["login"] as? String{
+                        if login == "Andre113" {
+//                            println("Adicionar")
+                            arrayPulls.addObject(pullRequest)
+                        }
+                    }
+                }
+            }
+//            println("**************")
+        }
+        return arrayPulls
+    }
+    
+    static func buscarLabel(pullRequest: NSDictionary) -> NSArray{
+        var arraySaida = NSMutableArray()
+        
+        let labels: NSArray = pullRequest["labels"] as! NSArray
+        
+        
+//        for eachLabel in labels{
+//            let label: NSDictionary = eachLabel as! NSDictionary
+//            let newLabel = LabelT()
+//            newLabel.desc = eachLabel["name"] as! String
+//            newLabel.cor = eachLabel["color"] as! String
+//            arraySaida.addObject(newLabel)
+//        }
+        
+        return labels
+    }
 }
