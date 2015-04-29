@@ -19,10 +19,8 @@ class CoreDataManager: NSObject {
     var context: NSManagedObjectContext!
     
     func fetchDataForEntity(entity:String, predicate:NSPredicate) -> NSArray {
-        let request: NSFetchRequest = NSFetchRequest()
+        let request: NSFetchRequest = NSFetchRequest(entityName: entity)
         request.predicate = predicate
-        let description: NSEntityDescription = NSEntityDescription.entityForName(entity, inManagedObjectContext: context)!
-        request.entity = description
         
         let error: NSErrorPointer = NSErrorPointer()
         

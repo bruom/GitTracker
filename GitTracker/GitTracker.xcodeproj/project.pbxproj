@@ -16,8 +16,8 @@
 		154F40191AEEA206004E3B8E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 154F40171AEEA206004E3B8E /* LaunchScreen.xib */; };
 		154F40251AEEA206004E3B8E /* GitTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F40241AEEA206004E3B8E /* GitTrackerTests.swift */; };
 		154F40371AEEA86C004E3B8E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F40361AEEA86C004E3B8E /* CoreDataManager.swift */; };
-		154F403D1AEEC8D1004E3B8E /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F403C1AEEC8D0004E3B8E /* Label.swift */; };
-		154F403F1AEEC8D1004E3B8E /* Projeto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F403E1AEEC8D1004E3B8E /* Projeto.swift */; };
+		154F40431AF005CD004E3B8E /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F40421AF005CD004E3B8E /* Label.swift */; };
+		154F40451AF005CE004E3B8E /* Projeto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F40441AF005CE004E3B8E /* Projeto.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,8 +44,8 @@
 		154F40231AEEA206004E3B8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		154F40241AEEA206004E3B8E /* GitTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitTrackerTests.swift; sourceTree = "<group>"; };
 		154F40361AEEA86C004E3B8E /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
-		154F403C1AEEC8D0004E3B8E /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
-		154F403E1AEEC8D1004E3B8E /* Projeto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projeto.swift; sourceTree = "<group>"; };
+		154F40421AF005CD004E3B8E /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
+		154F40441AF005CE004E3B8E /* Projeto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projeto.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,8 +87,8 @@
 		154F40061AEEA206004E3B8E /* GitTracker */ = {
 			isa = PBXGroup;
 			children = (
-				154F403E1AEEC8D1004E3B8E /* Projeto.swift */,
-				154F403C1AEEC8D0004E3B8E /* Label.swift */,
+				154F40441AF005CE004E3B8E /* Projeto.swift */,
+				154F40421AF005CD004E3B8E /* Label.swift */,
 				154F40091AEEA206004E3B8E /* AppDelegate.swift */,
 				154F400E1AEEA206004E3B8E /* MasterViewController.swift */,
 				154F40101AEEA206004E3B8E /* DetailViewController.swift */,
@@ -228,9 +228,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				154F400A1AEEA206004E3B8E /* AppDelegate.swift in Sources */,
-				154F403F1AEEC8D1004E3B8E /* Projeto.swift in Sources */,
+				154F40451AF005CE004E3B8E /* Projeto.swift in Sources */,
 				154F400D1AEEA206004E3B8E /* GitTracker.xcdatamodeld in Sources */,
-				154F403D1AEEC8D1004E3B8E /* Label.swift in Sources */,
+				154F40431AF005CD004E3B8E /* Label.swift in Sources */,
 				154F400F1AEEA206004E3B8E /* MasterViewController.swift in Sources */,
 				154F40371AEEA86C004E3B8E /* CoreDataManager.swift in Sources */,
 				154F40111AEEA206004E3B8E /* DetailViewController.swift in Sources */,
