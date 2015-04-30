@@ -53,14 +53,22 @@ class DetailViewController: UIViewController {
             var floatLegal:Float = 100.0
             for eachLabel in projeto.labels {
                 let gitLabel = eachLabel as! Label
-                let uiLabel:UILabel = UILabel(frame: CGRectMake(100, CGFloat(floatLegal), 100, 30))
+                let uiLabel:UILabel = UILabel(frame: CGRectMake(20, CGFloat(floatLegal), 100, 30))
                 
                 uiLabel.text = gitLabel.desc
                 
+                //uiLabel.frame.size.width = uiLabel.font.pointSize * CGFloat(count(gitLabel.desc))
+                uiLabel.numberOfLines = 1
+                uiLabel.sizeToFit()
+                uiLabel.frame.size.height += 2
+                uiLabel.frame.size.width += 10
+                uiLabel.textAlignment = NSTextAlignment.Center
                 
                 uiLabel.backgroundColor = hexStringToUIColor(gitLabel.cor)
-                uiLabel.layer.borderWidth = 1.0
+                uiLabel.layer.borderWidth = 2.0
+                uiLabel.layer.borderColor = hexStringToUIColor(gitLabel.cor).CGColor
                 uiLabel.layer.cornerRadius = 10.0
+                uiLabel.layer.masksToBounds = true
                 
                 self.view.addSubview(uiLabel)
                 floatLegal += 50
@@ -80,10 +88,10 @@ class DetailViewController: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
-        label.text = projeto.nome as? String
-        
-        self.view.addSubview(label)
+//        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
+//        label.text = projeto.nome as? String
+//        
+//        self.view.addSubview(label)
     }
 
     override func didReceiveMemoryWarning() {
