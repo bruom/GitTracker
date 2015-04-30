@@ -56,10 +56,10 @@ class DetailViewController: UIViewController {
             //colocar labellegal aqui
         }
         else{
-            var floatLegal:Float = 100.0
+            var floatLegal:Float = 40.0
             for eachLabel in projeto.labels {
                 let gitLabel = eachLabel as! Label
-                let uiLabel:UILabel = UILabel(frame: CGRectMake(20, CGFloat(floatLegal), 100, 30))
+                let uiLabel:UILabel = UILabel(frame: CGRectMake(10, CGFloat(floatLegal), 100, 40))
                 
                 uiLabel.text = gitLabel.desc
                 
@@ -75,6 +75,7 @@ class DetailViewController: UIViewController {
                 uiLabel.layer.borderColor = hexStringToUIColor(gitLabel.cor).CGColor
                 uiLabel.layer.cornerRadius = 10.0
                 uiLabel.layer.masksToBounds = true
+                uiLabel.center = self.view.center
                 
                 self.view.addSubview(uiLabel)
                 self.arrayLabels.append(uiLabel)
@@ -105,7 +106,7 @@ class DetailViewController: UIViewController {
     
     func fisica(){
         gravity = UIGravityBehavior(items: self.arrayLabels)
-        gravity.magnitude = 0.4
+        gravity.magnitude = 0.3
         
         collision = UICollisionBehavior(items: self.arrayLabels)
         collision.collisionMode = UICollisionBehaviorMode.Everything
@@ -115,15 +116,11 @@ class DetailViewController: UIViewController {
         properties = UIDynamicItemBehavior(items: self.arrayLabels)
         properties.allowsRotation = false
         properties.elasticity = 0.8
-        properties.resistance = 0.4
+        properties.resistance = 0.2
         
         animator.addBehavior(properties)
         animator.addBehavior(gravity)
         animator.addBehavior(collision)
-        // let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
-        // label.text = projeto.nome as? String
-        //
-        // self.view.addSubview(label)
     }
     
     func hexStringToUIColor (hex:String) -> UIColor {
