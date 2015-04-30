@@ -36,11 +36,13 @@ class LoginView: UIViewController {
         
         if match == 0 {
             println("NO GO")
+            sender.userInteractionEnabled = false
             UIView.animateWithDuration(0.06, animations: { () -> Void in
                 UIView.setAnimationRepeatCount(7.4)
                 self.textField.transform = CGAffineTransformMakeTranslation(0, 4)
             }, completion: { (comp) -> Void in
                 self.textField.transform = CGAffineTransformMakeTranslation(0, 0)
+                sender.userInteractionEnabled = true
             })
 
         }

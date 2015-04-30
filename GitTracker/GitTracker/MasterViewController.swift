@@ -156,8 +156,5 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let esseProjeto = projetoArray.objectAtIndex(indexPath.row) as! Projeto
         cell.textLabel!.text = esseProjeto.nome
     }
-
-
-
 }
 
