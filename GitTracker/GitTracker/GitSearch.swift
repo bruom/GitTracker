@@ -47,21 +47,32 @@ class GitSearch: NSObject {
         self.searchURL(url2, arrayLocal: arrayMackMobile)
         
         var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
-        var validados = self.validarPull(arrayIntersec, username: username)
+        var pullRequests = self.validarPull(arrayIntersec, username: username)
         
-        for validadoArray in validados {
-            var validado = validadoArray as! NSDictionary
+        for pull in pullRequests {
+            var pullRequest = pull as! NSDictionary
+            
             var projeto:Projeto = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Projeto
-            let url = validado.objectForKey("url")
+            let url = pullRequest.objectForKey("url")
             let arr:[String] = url!.componentsSeparatedByString("/") as! [String]
                 
             projeto.nome = arr[arr.count-3]
-            projeto.user = ((validado.objectForKey("user"))?.objectForKey("login") as? String)!
+            projeto.user = ((pullRequest.objectForKey("user"))?.objectForKey("login") as? String)!
+            
+            var labels = self.buscarLabel(pullRequest)
+            
+            for label in labels{
+                var newLabel = NSEntityDescription.insertNewObjectForEntityForName("Label", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Label
+                
+                newLabel.desc = label.objectForKey("name") as! String
+                newLabel.cor = label.objectForKey("color") as! String
+                newLabel.umProjeto = projeto
+                projeto.addLabel(newLabel)
+                
+            }
         }
         
         CoreDataManager.sharedInstance.saveContext()
-        var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
-        
     }
     
     static func geralSearch(url: String) -> AnyObject{

@@ -68,7 +68,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let detailView: DetailViewController = DetailViewController()
         let center: NSNotificationCenter = NSNotificationCenter.defaultCenter()
-        
+        let projeto = projetoArray.objectAtIndex(indexPath.row) as! Projeto
         center.postNotificationName("setContent", object: nil, userInfo: ["Projeto": projetoArray.objectAtIndex(indexPath.row)])
         self.navigationController?.pushViewController(detailView, animated: true)
         

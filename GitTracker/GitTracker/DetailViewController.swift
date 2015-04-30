@@ -40,6 +40,34 @@ class DetailViewController: UIViewController {
         let details = notif.userInfo as! Dictionary<String,Projeto>
         projeto = details["Projeto"]!
         
+        if nil == projeto {
+            println("CHAMA OS BOMBEIRO")
+            return
+        }
+        
+        if projeto.labels.count < 1 {
+            println("NOLABELS")
+            //colocar labellegal aqui
+        }
+        else{
+            var floatLegal:Float = 100.0
+            for eachLabel in projeto.labels {
+                let gitLabel = eachLabel as! Label
+                let uiLabel:UILabel = UILabel(frame: CGRectMake(100, CGFloat(floatLegal), 100, 30))
+                
+                uiLabel.text = gitLabel.desc
+                
+                
+                uiLabel.backgroundColor = hexStringToUIColor(gitLabel.cor)
+                uiLabel.layer.borderWidth = 1.0
+                uiLabel.layer.cornerRadius = 10.0
+                
+                self.view.addSubview(uiLabel)
+                floatLegal += 50
+            }
+        }
+        
+        
     }
 
     override func viewDidLoad() {
@@ -54,12 +82,35 @@ class DetailViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
         label.text = projeto.nome as? String
+        
         self.view.addSubview(label)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(advance(cString.startIndex, 1))
+        }
+        
+        if (count(cString) != 6) {
+            return UIColor.grayColor()
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
     }
 
 

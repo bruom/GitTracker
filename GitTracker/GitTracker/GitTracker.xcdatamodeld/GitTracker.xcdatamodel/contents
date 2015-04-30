@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D131" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D136" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Label" representedClassName="GitTracker.Label" syncable="YES">
         <attribute name="cor" attributeType="String" syncable="YES"/>
         <attribute name="desc" attributeType="String" syncable="YES"/>
-        <relationship name="umProjeto" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Projeto" inverseName="labels" inverseEntity="Projeto" syncable="YES"/>
+        <relationship name="umProjeto" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Projeto" inverseName="labels" inverseEntity="Projeto" syncable="YES"/>
     </entity>
     <entity name="Projeto" representedClassName="GitTracker.Projeto" syncable="YES">
         <attribute name="nome" attributeType="String" syncable="YES"/>
@@ -11,7 +11,7 @@
         <relationship name="labels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Label" inverseName="umProjeto" inverseEntity="Label" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Projeto" positionX="-18326" positionY="-7654" width="128" height="88"/>
         <element name="Label" positionX="-18047" positionY="-7606" width="128" height="88"/>
+        <element name="Projeto" positionX="-18326" positionY="-7654" width="128" height="88"/>
     </elements>
 </model>
