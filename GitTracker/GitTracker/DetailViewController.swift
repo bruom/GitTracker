@@ -14,6 +14,10 @@ class DetailViewController: UIViewController {
 
 
     var projeto:Projeto!
+    var gravity = UIGravityBehavior()
+    var animator = UIDynamicAnimator()
+    var collision = UICollisionBehavior()
+    var properties = UIDynamicItemBehavior()
     
     //var detailLabel:UILabel!
 //    lazy var detailLabel:UILabel = {
@@ -88,12 +92,37 @@ class DetailViewController: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-//        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
-//        label.text = projeto.nome as? String
-//        
-//        self.view.addSubview(label)
+        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 25))
+        let label2: UILabel = UILabel (frame: CGRectMake(170, self.view.frame.size.height/2 + 130, 300, 25))
+        
+        label.text = projeto.nome as? String
+        label2.text = projeto.user as? String
+        
+        self.view.addSubview(label)
+        self.view.addSubview(label2)
+        var arrayLabels2 = [label, label2]
+        
+        gravity = UIGravityBehavior(items: arrayLabels2)
+        gravity.magnitude = 0.4
+        
+        collision = UICollisionBehavior(items: arrayLabels2)
+        collision.collisionMode = UICollisionBehaviorMode.Everything
+        collision.translatesReferenceBoundsIntoBoundary = true
+        collision.addBoundaryWithIdentifier("tela", fromPoint: CGPointMake(self.view.frame.minX, self.view.frame.maxY), toPoint: CGPointMake(self.view.frame.maxX, self.view.frame.maxY))
+        
+        properties = UIDynamicItemBehavior(items: arrayLabels2)
+        properties.allowsRotation = false
+        properties.elasticity = 0.8
+        properties.resistance = 0.4
+        
+        animator.addBehavior(properties)
+        animator.addBehavior(gravity)
+        animator.addBehavior(collision)
+        // let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
+        // label.text = projeto.nome as? String
+        // 
+        // self.view.addSubview(label)
     }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
