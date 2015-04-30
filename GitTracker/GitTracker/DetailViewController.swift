@@ -19,6 +19,8 @@ class DetailViewController: UIViewController {
     var collision = UICollisionBehavior()
     var properties = UIDynamicItemBehavior()
     
+    var arrayLabels: [UILabel] = []
+    
     //var detailLabel:UILabel!
 //    lazy var detailLabel:UILabel = {
 //        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
@@ -75,6 +77,7 @@ class DetailViewController: UIViewController {
                 uiLabel.layer.masksToBounds = true
                 
                 self.view.addSubview(uiLabel)
+                self.arrayLabels.append(uiLabel)
                 floatLegal += 50
             }
         }
@@ -92,25 +95,24 @@ class DetailViewController: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 25))
-        let label2: UILabel = UILabel (frame: CGRectMake(170, self.view.frame.size.height/2 + 130, 300, 25))
-        
-        label.text = projeto.nome as? String
-        label2.text = projeto.user as? String
-        
-        self.view.addSubview(label)
-        self.view.addSubview(label2)
-        var arrayLabels2 = [label, label2]
-        
-        gravity = UIGravityBehavior(items: arrayLabels2)
+        self.fisica()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func fisica(){
+        gravity = UIGravityBehavior(items: self.arrayLabels)
         gravity.magnitude = 0.4
         
-        collision = UICollisionBehavior(items: arrayLabels2)
+        collision = UICollisionBehavior(items: self.arrayLabels)
         collision.collisionMode = UICollisionBehaviorMode.Everything
         collision.translatesReferenceBoundsIntoBoundary = true
         collision.addBoundaryWithIdentifier("tela", fromPoint: CGPointMake(self.view.frame.minX, self.view.frame.maxY), toPoint: CGPointMake(self.view.frame.maxX, self.view.frame.maxY))
         
-        properties = UIDynamicItemBehavior(items: arrayLabels2)
+        properties = UIDynamicItemBehavior(items: self.arrayLabels)
         properties.allowsRotation = false
         properties.elasticity = 0.8
         properties.resistance = 0.4
@@ -120,12 +122,8 @@ class DetailViewController: UIViewController {
         animator.addBehavior(collision)
         // let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
         // label.text = projeto.nome as? String
-        // 
+        //
         // self.view.addSubview(label)
-    }
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func hexStringToUIColor (hex:String) -> UIColor {

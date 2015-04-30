@@ -46,7 +46,9 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         //self.view.backgroundColor = UIColor(netHex: 0xf99608)
         
-        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "TRUEPREDICATE")))
+        let useDef = NSUserDefaults.standardUserDefaults()
+        
+        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
         
         //self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
@@ -57,7 +59,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     override func viewWillAppear(animated: Bool) {
-        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "TRUEPREDICATE")))
+        let useDef = NSUserDefaults.standardUserDefaults()
+        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
     }
 
     override func didReceiveMemoryWarning() {
@@ -90,35 +93,11 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let context = self.manager.context
         //let entity = self.fetchedResultsController.fetchRequest.entity!
         
-        GitSearch.preencheDados("rafaelhieda")
+        let useDef = NSUserDefaults.standardUserDefaults()
         
-//        //testa se o objeto a ser inserido ja existe - evita duplicadas
-//        let results = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "nome = %@ && user = %@", "blablabla", "bob")))
-//        if results.count > 0 {
-//            println("NO DUPLICATES")
-//        }
-//        else {
-//            let novoProjeto = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: context) as! Projeto
-//            
-//            novoProjeto.nome = "blablabla"
-//            novoProjeto.user = "bob"
-////            novoProjeto.setValue("blablabla", forKey: "nome")
-////            novoProjeto.setValue("bob", forKey: "user")
-//            
-//            projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "TRUEPREDICATE")))
-//            
-//            self.tableView.reloadData()
-//            
-//            
-//            // Save the context.
-//            var error: NSError? = nil
-//            if !context.save(&error) {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                //println("Unresolved error \(error), \(error.userInfo)")
-//                abort()
-//            }
-//        }
+        GitSearch.preencheDados(useDef.valueForKey("username") as! String)
+        
+
     }
 
     // MARK: - Segues

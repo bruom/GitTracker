@@ -20,8 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let coreDataSingleton = CoreDataManager.sharedInstance
         coreDataSingleton.context = self.managedObjectContext
         let navigationController = self.window!.rootViewController as! UINavigationController
-        let controller = navigationController.topViewController as! MasterViewController
-        controller.managedObjectContext = self.managedObjectContext
+        let controller = navigationController.topViewController as! LoginView
+        //controller.managedObjectContext = self.managedObjectContext
         return true
     }
 
@@ -33,6 +33,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
+            for i in 1...10{
+                println("roar")
+                NSThread.sleepForTimeInterval(2)
+            }
+        })
+        
     }
 
     func applicationWillEnterForeground(application: UIApplication) {

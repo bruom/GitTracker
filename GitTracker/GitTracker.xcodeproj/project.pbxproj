@@ -16,6 +16,7 @@
 		154F40191AEEA206004E3B8E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 154F40171AEEA206004E3B8E /* LaunchScreen.xib */; };
 		154F40251AEEA206004E3B8E /* GitTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F40241AEEA206004E3B8E /* GitTrackerTests.swift */; };
 		154F40371AEEA86C004E3B8E /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154F40361AEEA86C004E3B8E /* CoreDataManager.swift */; };
+		241928431AF2BF6E0035D824 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241928421AF2BF6E0035D824 /* LoginView.swift */; };
 		246FDBDB1AF148F700845358 /* GitSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246FDBDA1AF148F700845358 /* GitSearch.swift */; };
 		24779F3E1AF15E7500E72DE9 /* LabelT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24779F3D1AF15E7500E72DE9 /* LabelT.swift */; };
 		24D785F51AF2960500B263A1 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24D785F41AF2960500B263A1 /* Label.swift */; };
@@ -46,6 +47,7 @@
 		154F40231AEEA206004E3B8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		154F40241AEEA206004E3B8E /* GitTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitTrackerTests.swift; sourceTree = "<group>"; };
 		154F40361AEEA86C004E3B8E /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		241928421AF2BF6E0035D824 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		246FDBDA1AF148F700845358 /* GitSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitSearch.swift; sourceTree = "<group>"; };
 		24779F3D1AF15E7500E72DE9 /* LabelT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LabelT.swift; path = ../LabelT.swift; sourceTree = "<group>"; };
 		24D785F41AF2960500B263A1 /* Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				154F40071AEEA206004E3B8E /* Supporting Files */,
 				154F40361AEEA86C004E3B8E /* CoreDataManager.swift */,
 				246FDBDA1AF148F700845358 /* GitSearch.swift */,
+				241928421AF2BF6E0035D824 /* LoginView.swift */,
 			);
 			path = GitTracker;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				154F40371AEEA86C004E3B8E /* CoreDataManager.swift in Sources */,
 				24D785F71AF2960500B263A1 /* Projeto.swift in Sources */,
 				24D785F51AF2960500B263A1 /* Label.swift in Sources */,
+				241928431AF2BF6E0035D824 /* LoginView.swift in Sources */,
 				154F40111AEEA206004E3B8E /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
