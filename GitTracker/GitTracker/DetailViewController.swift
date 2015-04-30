@@ -21,12 +21,6 @@ class DetailViewController: UIViewController {
     
     var arrayLabels: [UILabel] = []
     
-    //var detailLabel:UILabel!
-//    lazy var detailLabel:UILabel = {
-//        let label: UILabel = UILabel(frame: CGRectMake(200, self.view.frame.size.height/2, 300, 50))
-//        return label
-//    }()
-    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
@@ -56,6 +50,11 @@ class DetailViewController: UIViewController {
             //colocar labellegal aqui
         }
         else{
+            
+//            for eachLabel in projeto.labels{
+//                let gitLabel = eachLabel as! Label
+//            }
+            
             var floatLegal:Float = 40.0
             for eachLabel in projeto.labels {
                 let gitLabel = eachLabel as! Label
@@ -82,8 +81,6 @@ class DetailViewController: UIViewController {
                 floatLegal += 50
             }
         }
-        
-        
     }
 
     override func viewDidLoad() {
@@ -144,7 +141,5 @@ class DetailViewController: UIViewController {
             alpha: CGFloat(1.0)
         )
     }
-
-
 }
 
