@@ -16,39 +16,56 @@ class GitSearch: NSObject {
     let clientSecret = "15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
     
     
-    static func teste() {
+//    static func teste() {
+//        var arrayUsuario = NSMutableArray()
+//        var arrayMackMobile = NSMutableArray()
+//        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+//        var url1 = "https://api.github.com/users/Andre113/repos\(auth)"
+//        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
+//        self.searchURL(url1, arrayLocal: arrayUsuario)
+//        self.searchURL(url2, arrayLocal: arrayMackMobile)
+//        
+//        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
+//        var validados = self.validarPull(arrayIntersec, username:"Andre113")
+//        
+//        var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
+//        for label in labels {
+//            println(label["name"] as! String)
+//            println(label["url"] as! String)
+//        }
+//    }
+    
+    static func buscarRepos(username:String) -> NSArray{
         var arrayUsuario = NSMutableArray()
         var arrayMackMobile = NSMutableArray()
+        
         let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
-        var url1 = "https://api.github.com/users/Andre113/repos\(auth)"
-        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
-        self.searchURL(url1, arrayLocal: arrayUsuario)
-        self.searchURL(url2, arrayLocal: arrayMackMobile)
+        
+        var cont = true
+        var page = 1
+        while(cont) {
+            var url1 = "https://api.github.com/users/\(username)/repos\(auth)&page=\(page)"
+            cont = self.searchURL(url1, arrayLocal: arrayUsuario)
+            page++
+        }
+        cont = true
+        page = 1
+        
+        while(cont){
+            var url2 = "https://api.github.com/users/mackmobile/repos\(auth)&page=\(page)"
+            cont = self.searchURL(url2, arrayLocal: arrayMackMobile)
+            page++
+        }
         
         var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
-        var validados = self.validarPull(arrayIntersec, username:"Andre113")
-        
-        var labels = self.buscarLabel(validados.lastObject as! NSDictionary)
-        for label in labels {
-            println(label["name"] as! String)
-            println(label["url"] as! String)
-        }
+        return self.validarPull(arrayIntersec, username: username)
     }
     
     
     static func preencheDados(username:String){
         //var dados:NSMutableArray = NSMutableArray()
         
-        var arrayUsuario = NSMutableArray()
-        var arrayMackMobile = NSMutableArray()
-        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
-        var url1 = "https://api.github.com/users/\(username)/repos\(auth)"
-        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
-        self.searchURL(url1, arrayLocal: arrayUsuario)
-        self.searchURL(url2, arrayLocal: arrayMackMobile)
-        
-        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
-        var pullRequests = self.validarPull(arrayIntersec, username: username)
+        var pullRequests = self.buscarRepos(username)
         
         for pull in pullRequests {
             var pullRequest = pull as! NSDictionary
@@ -99,16 +116,7 @@ class GitSearch: NSObject {
         let oldData:NSArray = CoreDataManager.sharedInstance.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String))
         
         //busca os dados atuais
-        var arrayUsuario = NSMutableArray()
-        var arrayMackMobile = NSMutableArray()
-        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
-        var url1 = "https://api.github.com/users/\(username)/repos\(auth)"
-        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
-        self.searchURL(url1, arrayLocal: arrayUsuario)
-        self.searchURL(url2, arrayLocal: arrayMackMobile)
-        
-        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
-        var pullRequests = self.validarPull(arrayIntersec, username: username)
+        var pullRequests = self.buscarRepos(username)
         
         
         //compara para ver se precisa alterar algo; adiciona repositorios novos se nao houver registro com mesmo nome na base de dados, apaga repositorios que nao tem mais correspondencia nos dados atualizados
@@ -161,7 +169,7 @@ class GitSearch: NSObject {
                         }
                         println("\(oldRepo.nome) updated!")
                     }else {
-                        println("REPO UP TO DATE")
+                        println("\(oldRepo.nome) UP TO DATE")
                     }
                 }//fim do bloco de correspondecia de nomes
             }//fim do bloco de comparacao entre repo no git e no bd
@@ -237,7 +245,9 @@ class GitSearch: NSObject {
         }
     }
     
-    static func searchURL(url: String, arrayLocal: NSMutableArray){
+    
+    //busca os resultados de uma dada URL e adiciona-os ao array passado. retorna false caso nao haja qualquer dado na url (pagina em branco)
+    static func searchURL(url: String, arrayLocal: NSMutableArray) -> Bool{
         //        let urlString:String = "https://api.github.com/users/Andre113/repos"
         //        let urlString: String = "file:///Users/AndreLucas/Documents/repos.html"
         //        let urlSearch:NSURL = NSURL(string: urlString)!
@@ -248,6 +258,9 @@ class GitSearch: NSObject {
         let resultado: AnyObject = (self.geralSearch(url) as? AnyObject)!
         
         if let repositorios = resultado as? NSArray{
+            if repositorios.count < 1 {
+                return false
+            }
             var repositorio: NSDictionary
             
             for repositorio in repositorios{
@@ -257,6 +270,9 @@ class GitSearch: NSObject {
                 println(url)
             }
         }
+        
+        return true
+        
 //        println("***")
         //        self.searchOwner()
     }
