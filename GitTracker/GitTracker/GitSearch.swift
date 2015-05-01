@@ -58,6 +58,7 @@ class GitSearch: NSObject {
                 
             projeto.nome = arr[arr.count-3]
             projeto.user = ((pullRequest.objectForKey("user"))?.objectForKey("login") as? String)!
+            projeto.lastUpdate = ((pullRequest.objectForKey("updated_at")) as? String)!
             
             var labels = self.buscarLabel(pullRequest)
             

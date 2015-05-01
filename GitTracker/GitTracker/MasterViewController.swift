@@ -59,8 +59,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
     
     override func viewWillAppear(animated: Bool) {
-        let useDef = NSUserDefaults.standardUserDefaults()
-        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
+        self.atualizaDados()
     }
 
     override func didReceiveMemoryWarning() {
@@ -75,6 +74,12 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         center.postNotificationName("setContent", object: nil, userInfo: ["Projeto": projetoArray.objectAtIndex(indexPath.row)])
         self.navigationController?.pushViewController(detailView, animated: true)
         
+    }
+    
+    func atualizaDados() {
+        let useDef = NSUserDefaults.standardUserDefaults()
+        projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
+        self.tableView.reloadData()
     }
     
     func refreshList(sender: AnyObject) {
@@ -96,6 +101,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let useDef = NSUserDefaults.standardUserDefaults()
         
         GitSearch.preencheDados(useDef.valueForKey("username") as! String)
+        
+        self.atualizaDados()
         
 
     }
@@ -155,6 +162,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         let esseProjeto = projetoArray.objectAtIndex(indexPath.row) as! Projeto
         cell.textLabel!.text = esseProjeto.nome
+        cell.detailTextLabel?.text = esseProjeto.lastUpdate
     }
 }
 
