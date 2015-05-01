@@ -22,4 +22,8 @@ class Projeto: NSManagedObject {
         self.labels = NSSet(set: auxLabels)
     }
     
+    func resetLabels(){
+        self.labels = NSSet()
+    }
+    
 }

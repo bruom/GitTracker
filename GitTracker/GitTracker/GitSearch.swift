@@ -35,8 +35,9 @@ class GitSearch: NSObject {
         }
     }
     
+    
     static func preencheDados(username:String){
-        var dados:NSMutableArray = NSMutableArray()
+        //var dados:NSMutableArray = NSMutableArray()
         
         var arrayUsuario = NSMutableArray()
         var arrayMackMobile = NSMutableArray()
@@ -74,6 +75,151 @@ class GitSearch: NSObject {
         }
         
         CoreDataManager.sharedInstance.saveContext()
+    }
+    
+    func apagarRepos(username:String){
+        let userData:NSArray = CoreDataManager.sharedInstance.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", username))
+        
+        var repos = 0
+        
+        if userData.count > 0 {
+            for repo in userData {
+                let repoToDelete:Projeto = repo as! Projeto
+                CoreDataManager.sharedInstance.context.deleteObject(repoToDelete)
+                repos++
+            }
+        }
+        println("Deletados dados de \(repos) repositorios.")
+    }
+    
+    static func atualizaDados(username:String){
+        let useDef = NSUserDefaults.standardUserDefaults()
+        
+        //busca os dados já persistidos
+        let oldData:NSArray = CoreDataManager.sharedInstance.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String))
+        
+        //busca os dados atuais
+        var arrayUsuario = NSMutableArray()
+        var arrayMackMobile = NSMutableArray()
+        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+        var url1 = "https://api.github.com/users/\(username)/repos\(auth)"
+        var url2 = "https://api.github.com/users/mackmobile/repos\(auth)"
+        self.searchURL(url1, arrayLocal: arrayUsuario)
+        self.searchURL(url2, arrayLocal: arrayMackMobile)
+        
+        var arrayIntersec = self.interseccao(arrayUsuario, array2: arrayMackMobile)
+        var pullRequests = self.validarPull(arrayIntersec, username: username)
+        
+        
+        //compara para ver se precisa alterar algo; adiciona repositorios novos se nao houver registro com mesmo nome na base de dados, apaga repositorios que nao tem mais correspondencia nos dados atualizados
+        for newProj in pullRequests {
+            let newRepo = newProj as! NSDictionary
+            
+            let url: AnyObject? = newRepo.objectForKey("url")
+            let arr:[String] = url!.componentsSeparatedByString("/") as! [String]
+            
+            let newNome = arr[arr.count-3] as String
+            
+            //flag que controla se o repo encontrado no github existe no banco de dados local
+            var existsInDB = false
+            for oldProj in oldData {
+                let oldRepo = oldProj as! Projeto
+                
+                
+                //se encontrar correspondencia do novo proj com o antigo
+                if oldRepo.nome == newNome {
+                    existsInDB = true
+                    
+                    //se as datas de lastupdate forem diferentes, é preciso atualizar o projeto no coredata
+                    if oldRepo.lastUpdate != (newRepo.valueForKey("updated_at") as! String){
+                        
+                        oldRepo.nome = newNome
+                        
+                        oldRepo.user = ((newRepo.objectForKey("user"))?.objectForKey("login") as? String)!
+                        
+                        oldRepo.lastUpdate = newRepo.objectForKey("updated_at") as! String
+                        
+                        //remove as labels antigas
+                        for label in oldRepo.labels {
+                            let oldLabel = label as! Label
+                            CoreDataManager.sharedInstance.context.deleteObject(oldLabel)
+                        }
+                        
+                        oldRepo.resetLabels()
+                        
+                        
+                        //adiciona as labels atualizadas
+                        var labels = self.buscarLabel(newRepo)
+                        
+                        for label in labels{
+                            var newLabel = NSEntityDescription.insertNewObjectForEntityForName("Label", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Label
+                            
+                            newLabel.desc = label.objectForKey("name") as! String
+                            newLabel.cor = label.objectForKey("color") as! String
+                            newLabel.umProjeto = oldRepo
+                            oldRepo.addLabel(newLabel)
+                        }
+                        println("\(oldRepo.nome) updated!")
+                    }else {
+                        println("REPO UP TO DATE")
+                    }
+                }//fim do bloco de correspondecia de nomes
+            }//fim do bloco de comparacao entre repo no git e no bd
+            
+            //se nao encontrou no bd um repo que existe na nuvem, criar novo
+            if !existsInDB {
+                var projeto:Projeto = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Projeto
+                projeto.nome = newNome
+                projeto.user = ((newRepo.objectForKey("user"))?.objectForKey("login") as? String)!
+                projeto.lastUpdate = ((newRepo.objectForKey("updated_at")) as? String)!
+                
+                var labels = self.buscarLabel(newRepo)
+                
+                for label in labels{
+                    var newLabel = NSEntityDescription.insertNewObjectForEntityForName("Label", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Label
+                    
+                    newLabel.desc = label.objectForKey("name") as! String
+                    newLabel.cor = label.objectForKey("color") as! String
+                    newLabel.umProjeto = projeto
+                    projeto.addLabel(newLabel)
+                }
+            }
+        }//fim da iteracao sobre os repos no git
+        
+        //testar agora se existe algum repo no banco de dados local que nao existe no git, e entao apaga-lo
+        for oldProj in oldData {
+            let oldRepo = oldProj as! Projeto
+            var existsInGit = false
+            
+            for newProj in pullRequests {
+                let newRepo = newProj as! NSDictionary
+                
+                let url: AnyObject? = newRepo.objectForKey("url")
+                let arr:[String] = url!.componentsSeparatedByString("/") as! [String]
+                
+                let newNome = arr[arr.count-3] as String
+                
+                if oldRepo.nome == newNome {
+                    existsInGit = true
+                }
+            }
+            
+            //se o oldRepo nao existe no git, deve ser deletado do banco de dados local
+            if !existsInGit {
+                
+                //um pouco de redundancia, por precaucao
+                for label in oldRepo.labels {
+                    let oldLabel = label as! Label
+                    CoreDataManager.sharedInstance.context.deleteObject(oldLabel)
+                }
+                
+                CoreDataManager.sharedInstance.context.deleteObject(oldRepo)
+            }
+        }
+        
+        CoreDataManager.sharedInstance.saveContext()
+        
+        
     }
     
     static func geralSearch(url: String) -> AnyObject{

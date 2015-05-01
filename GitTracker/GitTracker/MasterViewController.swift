@@ -50,9 +50,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
         
+        let refreshButton = UIBarButtonItem(title: "Atualizar", style: UIBarButtonItemStyle.Plain, target: self, action: "atualizarButton:")
         //self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        let toolbar = UIToolbar(frame: CGRectMake(-16, self.view.frame.size.height - 50, self.view.frame.size.width, 50))
+        toolbar.items?.append(refreshButton)
+        
+        self.view.addSubview(toolbar)
 
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
+        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "atualizarButton:")
         self.navigationItem.rightBarButtonItem = addButton
         
         //GitSearch.teste()
@@ -82,17 +87,24 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         self.tableView.reloadData()
     }
     
-    func refreshList(sender: AnyObject) {
-        let context = self.manager.context
+    func atualizarButton(sender:UIButton!){
+        let useDef = NSUserDefaults.standardUserDefaults()
+        GitSearch.atualizaDados(useDef.valueForKey("username") as! String)
         
-        
-        var jsonArray: NSMutableArray = NSMutableArray()
-        
-        for item in jsonArray {
-            
-        }
-        
+        self.atualizaDados()
     }
+    
+//    func refreshList(sender: AnyObject) {
+//        let context = self.manager.context
+//        
+//        
+//        var jsonArray: NSMutableArray = NSMutableArray()
+//        
+//        for item in jsonArray {
+//            
+//        }
+//        
+//    }
 
     func insertNewObject(sender: AnyObject) {
         let context = self.manager.context
