@@ -55,6 +55,13 @@ class DetailViewController: UIViewController {
 //                let gitLabel = eachLabel as! Label
 //            }
             
+            
+            self.title = projeto.nome
+            //metodo que configura as infos das views.
+            self.configurarConteudo(projeto)
+            
+            
+            
             var floatLegal:Float = 40.0
             for eachLabel in projeto.labels {
                 let gitLabel = eachLabel as! Label
@@ -81,6 +88,21 @@ class DetailViewController: UIViewController {
                 floatLegal += 50
             }
         }
+    }
+    
+    func configurarConteudo(projeto: Projeto){
+        var nomeLabel:UILabel = UILabel(frame: CGRectMake(self.view.frame.origin.x + 30, self.view.frame.origin.y + 100, self.view.bounds.maxX, 40))
+        nomeLabel.text = "Nome do repositorio: ".stringByAppendingString(projeto.nome)
+        
+        var userLabel:UILabel = UILabel(frame: CGRectMake(self.view.frame.origin.x + 30, nomeLabel.frame.origin.y + 40, self.view.bounds.maxX, 40))
+        userLabel.text = "Usuario: ".stringByAppendingString(projeto.user)
+        
+        var lastUpdateLabel:UILabel = UILabel(frame: CGRectMake(self.view.frame.origin.x + 30, userLabel.frame.origin.y + 40, self.view.bounds.maxX, 40))
+        lastUpdateLabel.text = "Ultima atualização: ".stringByAppendingString(projeto.lastUpdate)
+        
+        self.view.addSubview(nomeLabel)
+        self.view.addSubview(userLabel)
+        self.view.addSubview(lastUpdateLabel)
     }
 
     override func viewDidLoad() {

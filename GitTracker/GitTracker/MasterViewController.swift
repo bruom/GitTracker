@@ -172,6 +172,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         println("Vai configurar")
         let esseProjeto = projetoArray.objectAtIndex(indexPath.row) as! Projeto
+        println("conteudo: \(esseProjeto.nome)")
         cell.textLabel!.text = esseProjeto.nome
         cell.detailTextLabel?.text = esseProjeto.lastUpdate
         
