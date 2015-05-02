@@ -30,12 +30,13 @@ class LoginView: UIViewController {
     
 
     @IBAction func goButton(sender: UIButton) {
-        let regex: NSRegularExpression = NSRegularExpression(pattern:"^[a-z]([a-z]| |\\+|\\(|\\)|'|\\^)*$", options:NSRegularExpressionOptions.CaseInsensitive , error: nil)!
+        let usernameFormatado:String = self.textField.text.lowercaseString
         
-        let match = regex.numberOfMatchesInString(textField.text as String, options: NSMatchingOptions.allZeros, range: NSMakeRange(0, count(textField.text as String)))
+        let regex: NSRegularExpression = NSRegularExpression(pattern:"^[a-z]([a-z]| |\\+|\\(|\\)|'|\\^)*", options:NSRegularExpressionOptions.CaseInsensitive , error: nil)!
+        
+        let match = regex.numberOfMatchesInString(usernameFormatado, options: NSMatchingOptions.allZeros, range: NSMakeRange(0, count(usernameFormatado)))
         
         if match == 0 {
-            println("NO GO")
             sender.userInteractionEnabled = false
             UIView.animateWithDuration(0.06, animations: { () -> Void in
                 UIView.setAnimationRepeatCount(7.4)
@@ -47,9 +48,8 @@ class LoginView: UIViewController {
 
         }
         else{
-            println("GO")
             let useDef = NSUserDefaults.standardUserDefaults()
-            let newUser = textField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            let newUser = usernameFormatado.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
             useDef.setValue(newUser as String, forKey: "username")
             let view = self.storyboard?.instantiateViewControllerWithIdentifier("TableView") as! MasterViewController
             self.navigationController?.pushViewController(view, animated: true)

@@ -115,8 +115,6 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         GitSearch.preencheDados(useDef.valueForKey("username") as! String)
         
         self.atualizaDados()
-        
-
     }
 
     // MARK: - Segues
@@ -172,9 +170,12 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+        println("Vai configurar")
         let esseProjeto = projetoArray.objectAtIndex(indexPath.row) as! Projeto
         cell.textLabel!.text = esseProjeto.nome
         cell.detailTextLabel?.text = esseProjeto.lastUpdate
+        
+        println(esseProjeto.nome + "foi montado")
     }
 }
 

@@ -178,7 +178,8 @@ class GitSearch: NSObject {
             if !existsInDB {
                 var projeto:Projeto = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Projeto
                 projeto.nome = newNome
-                projeto.user = ((newRepo.objectForKey("user"))?.objectForKey("login") as? String)!
+                var login = ((newRepo.objectForKey("user"))?.objectForKey("login") as? String)!
+                projeto.user = login.lowercaseString
                 projeto.lastUpdate = ((newRepo.objectForKey("updated_at")) as? String)!
                 
                 var labels = self.buscarLabel(newRepo)
@@ -267,26 +268,27 @@ class GitSearch: NSObject {
                 let url = repositorio["url"] as! String
                 
                 arrayLocal.addObject(url)
-                println(url)
+//                println(url)
             }
         }
         
         return true
         
 //        println("***")
-        //        self.searchOwner()
+//        self.searchOwner()
     }
     
     static func interseccao(array1: NSMutableArray, array2: NSMutableArray) -> NSMutableArray{
         var arraySaida = NSMutableArray()
+        
+        println("Fazer array de intersecção. Abaixo os forks: ")
         
         for cadaUrl in array1 {
             var splitString:[String] = cadaUrl.componentsSeparatedByString("/") as! [String]
             for cadaOutraUrl in array2 {
                 var split2:[String] = cadaOutraUrl.componentsSeparatedByString("/") as! [String]
                 if splitString.last == split2.last{
-//                    println("SAO IGUAIS!!!")
-//                    println(splitString.last)
+                    println(splitString.last!)
                     arraySaida.addObject(splitString.last!)
                 }
             }
@@ -296,25 +298,26 @@ class GitSearch: NSObject {
     }
     
     static func validarPull(arrayLocal: NSMutableArray, username:String) -> NSMutableArray{
-        let auth = "?client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
+        println("Validar pulls")
+        let auth = "client_id=5b018f27daf42c91a1da&client_secret=15217ff9ca9d46c2e1d23f774f9eb0ca78eb0161"
         var arrayPulls = NSMutableArray()
         
-        for repositorio in arrayLocal{
-            var url = "https://api.github.com/repos/mackmobile/\(repositorio)/issues\(auth)"
+        for repository in arrayLocal{
+            var url = "https://api.github.com/repos/mackmobile/\(repository)/issues?state=all&\(auth)"
             let resultado: AnyObject = self.geralSearch(url)
             let repositorio:NSArray = resultado.allObjects
             for pullR in repositorio {
                 let pullRequest = pullR as! NSDictionary
                 if let user = pullRequest["user"] as? NSDictionary{
                     if let login = user["login"] as? String{
-                        if login == username {
-//                            println("Adicionar")
+                      let loginFormatado = login.lowercaseString
+                        if loginFormatado == username {
+                            println("Adicionar", repository)
                             arrayPulls.addObject(pullRequest)
                         }
                     }
                 }
             }
-//            println("**************")
         }
         return arrayPulls
     }
