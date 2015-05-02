@@ -41,12 +41,17 @@ class DetailViewController: UIViewController {
         projeto = details["Projeto"]!
         
         if nil == projeto {
-            println("CHAMA OS BOMBEIRO")
+            println("Erro ao carregar dados do projeto.")
             return
         }
         
+        
+        self.title = projeto.nome
+        //metodo que configura as infos das views.
+        self.configurarConteudo(projeto)
+        
         if projeto.labels.count < 1 {
-            println("NOLABELS")
+            println("No labels.")
             //colocar labellegal aqui
         }
         else{
@@ -54,18 +59,71 @@ class DetailViewController: UIViewController {
 //            for eachLabel in projeto.labels{
 //                let gitLabel = eachLabel as! Label
 //            }
+
             
             
-            self.title = projeto.nome
-            //metodo que configura as infos das views.
-            self.configurarConteudo(projeto)
+            //ordenando por tipo
+            var bronzes = NSMutableArray()
+            var pratas = NSMutableArray()
+            var ouros = NSMutableArray()
+            var misc = NSMutableArray()
             
             
             
-            var floatLegal:Float = 40.0
+            
             for eachLabel in projeto.labels {
                 let gitLabel = eachLabel as! Label
-                let uiLabel:UILabel = UILabel(frame: CGRectMake(10, CGFloat(floatLegal), 100, 40))
+                
+                if gitLabel.desc.hasPrefix("Bronze") {
+                    bronzes.addObject(gitLabel)
+                }
+                else if gitLabel.desc.hasPrefix("Prata") {
+                    pratas.addObject(gitLabel)
+                }
+                else if gitLabel.desc.hasPrefix("Ouro") {
+                    ouros.addObject(gitLabel)
+                }
+                else {
+                    misc.addObject(gitLabel)
+                }
+            }
+            
+            //ordenando por numero
+            bronzes = NSMutableArray(array: bronzes.sortedArrayUsingComparator({ (l1, l2) -> NSComparisonResult in
+                return l1.desc.compare(l2.desc)
+            }))
+            pratas = NSMutableArray(array: pratas.sortedArrayUsingComparator({ (l1, l2) -> NSComparisonResult in
+                return l1.desc.compare(l2.desc)
+            }))
+            ouros = NSMutableArray(array: ouros.sortedArrayUsingComparator({ (l1, l2) -> NSComparisonResult in
+                return l1.desc.compare(l2.desc)
+            }))
+            misc = NSMutableArray(array: misc.sortedArrayUsingComparator({ (l1, l2) -> NSComparisonResult in
+                return l1.desc.compare(l2.desc)
+            }))
+            
+            var labelsEmOrdem = NSMutableArray()
+            
+            for eachLabel in bronzes {
+                labelsEmOrdem.addObject(eachLabel)
+            }
+            for eachLabel in pratas {
+                labelsEmOrdem.addObject(eachLabel)
+            }
+            for eachLabel in ouros {
+                labelsEmOrdem.addObject(eachLabel)
+            }
+            for eachLabel in misc {
+                labelsEmOrdem.addObject(eachLabel)
+            }
+                
+            
+            var alturaLabel:CGFloat = self.view.frame.size.height*0.8
+            //adicionando a tela
+            for eachLabel in labelsEmOrdem {
+                let gitLabel = eachLabel as! Label
+                
+                let uiLabel:UILabel = UILabel(frame: CGRectMake(10, CGFloat(alturaLabel), 100, 40))
                 
                 uiLabel.text = gitLabel.desc
                 
@@ -81,18 +139,19 @@ class DetailViewController: UIViewController {
                 uiLabel.layer.borderColor = hexStringToUIColor(gitLabel.cor).CGColor
                 uiLabel.layer.cornerRadius = 10.0
                 uiLabel.layer.masksToBounds = true
-                uiLabel.center = self.view.center
+                //uiLabel.center = self.view.center
+                uiLabel.center = CGPointMake(self.view.center.x, alturaLabel)
                 
                 self.view.addSubview(uiLabel)
                 self.arrayLabels.append(uiLabel)
-                floatLegal += 50
+                alturaLabel = alturaLabel - 50
             }
         }
     }
     
     func configurarConteudo(projeto: Projeto){
         var nomeLabel:UILabel = UILabel(frame: CGRectMake(self.view.frame.origin.x + 30, self.view.frame.origin.y + 100, self.view.bounds.maxX, 40))
-        nomeLabel.text = "Nome do repositorio: ".stringByAppendingString(projeto.nome)
+        nomeLabel.text = "Repositorio: ".stringByAppendingString(projeto.nome)
         
         var userLabel:UILabel = UILabel(frame: CGRectMake(self.view.frame.origin.x + 30, nomeLabel.frame.origin.y + 40, self.view.bounds.maxX, 40))
         userLabel.text = "Usuario: ".stringByAppendingString(projeto.user)
