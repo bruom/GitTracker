@@ -51,7 +51,7 @@ class LoginView: UIViewController {
             let useDef = NSUserDefaults.standardUserDefaults()
             let newUser = usernameFormatado.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
             useDef.setValue(newUser as String, forKey: "username")
-            let view = self.storyboard?.instantiateViewControllerWithIdentifier("TableView") as! MasterViewController
+            let view = self.storyboard?.instantiateViewControllerWithIdentifier("mainView") as! MainViewController
             self.navigationController?.pushViewController(view, animated: true)
         }
     }
