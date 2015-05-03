@@ -40,14 +40,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
         
-        let refreshButton = UIBarButtonItem(title: "Atualizar", style: UIBarButtonItemStyle.Plain, target: self, action: "atualizarButton:")
-        //self.navigationItem.leftBarButtonItem = self.editButtonItem()
-        let toolbar = UIToolbar(frame: CGRectMake(-16, self.view.frame.size.height - 50, self.view.frame.size.width, 50))
-        toolbar.items?.append(refreshButton)
-        
-        self.view.addSubview(toolbar)
-        
-        let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "atualizarButton:")
+        let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "atualizarButton:")
         self.navigationItem.rightBarButtonItem = addButton
         
         
@@ -123,18 +116,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
     }
     
-    func insertNewObject(sender: AnyObject) {
-        let context = self.manager.context
-        //let entity = self.fetchedResultsController.fetchRequest.entity!
-        
-        let useDef = NSUserDefaults.standardUserDefaults()
-        
-        GitSearch.preencheDados(useDef.valueForKey("username") as! String)
-        
-        self.atualizaDados()
-        
-    }
-    
     // MARK: - Table View
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -171,13 +152,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
-        println("Vai configurar")
+        //println("Vai configurar")
         let esseProjeto = projetoArray.objectAtIndex(indexPath.row) as! Projeto
-        println("conteudo: \(esseProjeto.nome)")
+        //println("conteudo: \(esseProjeto.nome)")
         cell.textLabel!.text = esseProjeto.nome
         cell.detailTextLabel?.text = esseProjeto.lastUpdate
         
-        println(esseProjeto.nome + "foi montado")
+        //println(esseProjeto.nome + "foi montado")
     }
 }
 

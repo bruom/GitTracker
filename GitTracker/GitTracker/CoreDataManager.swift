@@ -28,7 +28,7 @@ class CoreDataManager: NSObject {
         
         //tratar erro
         if error != nil {
-            println("Ocorreu um erro na persistencia. kawai halp")
+            println("Ocorreu um erro na persistencia.")
         }
         
         return resultSet
