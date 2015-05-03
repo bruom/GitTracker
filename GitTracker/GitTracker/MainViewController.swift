@@ -9,19 +9,6 @@
 import UIKit
 import CoreData
 
-extension UIColor {
-    convenience init(red: Int, green: Int, blue: Int) {
-        assert(red >= 0 && red <= 255, "Invalid red component")
-        assert(green >= 0 && green <= 255, "Invalid green component")
-        assert(blue >= 0 && blue <= 255, "Invalid blue component")
-        
-        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
-    }
-    
-    convenience init(netHex:Int) {
-        self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
-    }
-}
 
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -43,15 +30,11 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        //projetoArray = self.manager.fetchDataForEntity("Projeto", predicate:nil)
         manager = CoreDataManager.sharedInstance
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.blurView.hidden = true
-        
-        //self.view.backgroundColor = UIColor(netHex: 0xf99608)
         
         let useDef = NSUserDefaults.standardUserDefaults()
         
@@ -67,6 +50,17 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "atualizarButton:")
         self.navigationItem.rightBarButtonItem = addButton
         
+        
+        //auto updates e notificacao
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
+            while(true){
+                println("Checando atualizações...")
+                self.autoUpdate(useDef.valueForKey("username") as! String)
+                
+                //intervalo para auto-updates em segundos
+                NSThread.sleepForTimeInterval(1800)
+            }
+        })
         
         //GitSearch.teste()
     }
@@ -105,6 +99,45 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.tableView.reloadData()
     }
     
+    func autoUpdate(username:String) {
+        //atualizaDados(username)
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
+            while(true){
+                
+                println("Checando atualizações...")
+                
+                let changes = GitSearch.atualizaDados(username)
+                
+                if changes.count > 0 {
+                    let notif = UILocalNotification()
+                    notif.alertTitle = "Repositorios Atualizados!"
+                    
+                    if changes.count == 1 {
+                        notif.alertBody = "\(changes.firstObject) atualizado."
+                    }
+                    else {
+                        notif.alertBody = "\(changes.firstObject) e outros \(changes.count-1) repos atualizados."
+                    }
+                    
+                    notif.fireDate = NSDate()
+                    UIApplication.sharedApplication().scheduleLocalNotification(notif)
+                }
+                if changes.count < 1 {
+                    let notif = UILocalNotification()
+                    notif.alertTitle = "Repositorios sincronizados!"
+                    
+                    notif.alertBody = "Nada novo por aqui."
+                    
+                    notif.applicationIconBadgeNumber = 1
+                    notif.fireDate = NSDate()
+                    UIApplication.sharedApplication().scheduleLocalNotification(notif)
+                }
+                NSThread.sleepForTimeInterval(8)
+            }
+        })
+        
+    }
+    
     func atualizarButton(sender:UIButton!){
         
         
@@ -125,24 +158,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             
         })
         
-        
-//        let useDef = NSUserDefaults.standardUserDefaults()
-//        GitSearch.atualizaDados(useDef.valueForKey("username") as! String)
-//        
-//        self.atualizaDados()
     }
-    
-    //    func refreshList(sender: AnyObject) {
-    //        let context = self.manager.context
-    //
-    //
-    //        var jsonArray: NSMutableArray = NSMutableArray()
-    //
-    //        for item in jsonArray {
-    //
-    //        }
-    //
-    //    }
     
     func insertNewObject(sender: AnyObject) {
         let context = self.manager.context
@@ -155,17 +171,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.atualizaDados()
         
     }
-    
-    // MARK: - Segues
-    
-    //    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    //        if segue.identifier == "showDetail" {
-    //            if let indexPath = self.tableView.indexPathForSelectedRow() {
-    //            let object = self.projetoArray.objectAtIndex(indexPath.row) as! NSManagedObject
-    //            (segue.destinationViewController as! DetailViewController).detailItem = object
-    //            }
-    //        }
-    //    }
     
     // MARK: - Table View
     
@@ -191,18 +196,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             let context = self.manager.context
-            //            let predicate: NSPredicate = NSPredicate(format: "nome = %@", projetoArray.objectAtIndex(indexPath.row).valueForKey("nome") as! String)
-            //            let results = manager.fetchDataForEntity("Projeto", predicate: predicate)
-            //            let objeto: NSManagedObject = results.firstObject as! NSManagedObject
             context.deleteObject(projetoArray.objectAtIndex(indexPath.row) as! NSManagedObject)
             projetoArray.removeObjectAtIndex(indexPath.row)
             self.tableView.reloadData()
             
             var error: NSError? = nil
             if !context.save(&error) {
-                // Replace this implementation with code to handle the error appropriately.
-                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                //println("Unresolved error \(error), \(error.userInfo)")
                 abort()
             }
         }

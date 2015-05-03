@@ -47,6 +47,10 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "atualizarButton:")
         self.navigationItem.rightBarButtonItem = addButton
         
+        
+        
+        
+        
         //GitSearch.teste()
     }
     

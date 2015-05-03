@@ -109,7 +109,50 @@ class GitSearch: NSObject {
         println("Deletados dados de \(repos) repositorios.")
     }
     
-    static func atualizaDados(username:String){
+    static func autoUpdate(username:String) {
+        //atualizaDados(username)
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
+            while(true){
+                
+                println("Checando atualizações...")
+                
+                let changes = self.atualizaDados(username)
+                
+                if changes.count > 0 {
+                    let notif = UILocalNotification()
+                    notif.alertTitle = "Repositorios Atualizados!"
+                    
+                    if changes.count == 1 {
+                        notif.alertBody = "\(changes.firstObject) atualizado."
+                    }
+                    else {
+                        notif.alertBody = "\(changes.firstObject) e outros \(changes.count-1) repos atualizados."
+                    }
+                    
+                    notif.applicationIconBadgeNumber = 1
+                    notif.fireDate = NSDate()
+                    UIApplication.sharedApplication().scheduleLocalNotification(notif)
+                }
+                if changes.count < 1 {
+                    let notif = UILocalNotification()
+                    notif.alertTitle = "Repositorios sincronizados!"
+                    
+                    notif.alertBody = "Nada novo por aqui."
+                    
+                    notif.applicationIconBadgeNumber = 1
+                    notif.fireDate = NSDate()
+                    UIApplication.sharedApplication().scheduleLocalNotification(notif)
+                }
+                
+                NSThread.sleepForTimeInterval(8)
+            }
+        })
+        
+    }
+    
+    static func atualizaDados(username:String) -> NSMutableArray{
+        let changes = NSMutableArray()
+        
         let useDef = NSUserDefaults.standardUserDefaults()
         
         //busca os dados já persistidos
@@ -168,6 +211,7 @@ class GitSearch: NSObject {
                             oldRepo.addLabel(newLabel)
                         }
                         println("\(oldRepo.nome) updated!")
+                        changes.addObject(oldRepo.nome)
                     }else {
                         println("\(oldRepo.nome) UP TO DATE")
                     }
@@ -192,6 +236,7 @@ class GitSearch: NSObject {
                     newLabel.umProjeto = projeto
                     projeto.addLabel(newLabel)
                 }
+                changes.addObject(projeto.nome)
             }
         }//fim da iteracao sobre os repos no git
         
@@ -227,6 +272,8 @@ class GitSearch: NSObject {
         }
         
         CoreDataManager.sharedInstance.saveContext()
+        
+        return changes
         
         
     }
