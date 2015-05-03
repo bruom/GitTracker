@@ -55,9 +55,9 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
             while(true){
                 println("Checando atualizações...")
-                self.autoUpdate(useDef.valueForKey("username") as! String)
+                GitSearch.autoUpdate(useDef.valueForKey("username") as! String)
                 
-                //intervalo para auto-updates em segundos
+                //intervalo para auto-updates em segundos, colocar o mesmo la no gitsearch.autoupdate
                 NSThread.sleepForTimeInterval(1800)
             }
         })
@@ -99,44 +99,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.tableView.reloadData()
     }
     
-    func autoUpdate(username:String) {
-        //atualizaDados(username)
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
-            while(true){
-                
-                println("Checando atualizações...")
-                
-                let changes = GitSearch.atualizaDados(username)
-                
-                if changes.count > 0 {
-                    let notif = UILocalNotification()
-                    notif.alertTitle = "Repositorios Atualizados!"
-                    
-                    if changes.count == 1 {
-                        notif.alertBody = "\(changes.firstObject) atualizado."
-                    }
-                    else {
-                        notif.alertBody = "\(changes.firstObject) e outros \(changes.count-1) repos atualizados."
-                    }
-                    
-                    notif.fireDate = NSDate()
-                    UIApplication.sharedApplication().scheduleLocalNotification(notif)
-                }
-                if changes.count < 1 {
-                    let notif = UILocalNotification()
-                    notif.alertTitle = "Repositorios sincronizados!"
-                    
-                    notif.alertBody = "Nada novo por aqui."
-                    
-                    notif.applicationIconBadgeNumber = 1
-                    notif.fireDate = NSDate()
-                    UIApplication.sharedApplication().scheduleLocalNotification(notif)
-                }
-                NSThread.sleepForTimeInterval(8)
-            }
-        })
-        
-    }
+
     
     func atualizarButton(sender:UIButton!){
         

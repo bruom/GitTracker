@@ -123,10 +123,10 @@ class GitSearch: NSObject {
                     notif.alertTitle = "Repositorios Atualizados!"
                     
                     if changes.count == 1 {
-                        notif.alertBody = "\(changes.firstObject) atualizado."
+                        notif.alertBody = "\(changes.firstObject!) atualizado."
                     }
                     else {
-                        notif.alertBody = "\(changes.firstObject) e outros \(changes.count-1) repos atualizados."
+                        notif.alertBody = "\(changes.firstObject!) e outros \(changes.count-1) repos atualizados."
                     }
                     
                     notif.applicationIconBadgeNumber = 1
@@ -144,7 +144,8 @@ class GitSearch: NSObject {
                     UIApplication.sharedApplication().scheduleLocalNotification(notif)
                 }
                 
-                NSThread.sleepForTimeInterval(8)
+                //intervalo entre updates
+                NSThread.sleepForTimeInterval(1800)
             }
         })
         
