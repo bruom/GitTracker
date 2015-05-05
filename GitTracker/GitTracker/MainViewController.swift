@@ -43,7 +43,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let addButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "atualizarButton:")
         self.navigationItem.rightBarButtonItem = addButton
         
-        
         //auto updates e notificacao
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
             while(true){
@@ -58,8 +57,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //GitSearch.teste()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        self.tableView.reloadData()
+    }
+    
     override func viewWillAppear(animated: Bool) {
-        self.atualizaDados()
+        self.atualizarButton(nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -87,6 +90,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     func atualizaDados() {
+        
         let useDef = NSUserDefaults.standardUserDefaults()
         projetoArray = NSMutableArray(array: manager.fetchDataForEntity("Projeto", predicate: NSPredicate(format: "user = %@", useDef.valueForKey("username") as! String)))
         self.tableView.reloadData()

@@ -170,6 +170,7 @@ class GitSearch: NSObject {
             
             //se nao encontrou no bd um repo que existe na nuvem, criar novo
             if !existsInDB {
+                existsInDB = true
                 var projeto:Projeto = NSEntityDescription.insertNewObjectForEntityForName("Projeto", inManagedObjectContext: CoreDataManager.sharedInstance.context) as! Projeto
                 projeto.nome = newNome
                 var login = ((newRepo.objectForKey("user"))?.objectForKey("login") as? String)!
