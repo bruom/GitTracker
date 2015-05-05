@@ -67,6 +67,8 @@ class GitSearch: NSObject {
                 
                 let changes = self.atualizaDados(username)
                 
+                
+                
                 if changes.count > 0 {
                     let notif = UILocalNotification()
                     notif.alertTitle = "Repositorios Atualizados!"
@@ -94,7 +96,7 @@ class GitSearch: NSObject {
                 }
                 
                 //intervalo entre updates
-                NSThread.sleepForTimeInterval(1800)
+                NSThread.sleepForTimeInterval(30)
             }
         })
         
@@ -240,7 +242,7 @@ class GitSearch: NSObject {
         }
         else{
             println("Erro. Url inválida")
-            return NSObject()
+            return false
         }
     }
     
@@ -250,6 +252,11 @@ class GitSearch: NSObject {
         
         
         let resultado: AnyObject = (self.geralSearch(url))
+        
+        //ISSO MUDOU
+        if resultado as! NSObject == false{
+            return false
+        }
         
         if let repositorios = resultado as? NSArray{
             if repositorios.count < 1 {

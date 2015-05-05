@@ -44,15 +44,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.navigationItem.rightBarButtonItem = addButton
         
         //auto updates e notificacao
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
-            while(true){
-                println("Checando atualizações...")
-                GitSearch.autoUpdate(useDef.valueForKey("username") as! String)
-                
-                //intervalo para auto-updates em segundos, colocar o mesmo la no gitsearch.autoupdate
-                NSThread.sleepForTimeInterval(1800)
-            }
-        })
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
+//            while(true){
+//                println("Checando atualizações...")
+//                GitSearch.autoUpdate(useDef.valueForKey("username") as! String)
+//                
+//                //intervalo para auto-updates em segundos, colocar o mesmo la no gitsearch.autoupdate
+//                NSThread.sleepForTimeInterval(30)
+//            }
+//        })
         
         //GitSearch.teste()
     }

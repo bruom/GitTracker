@@ -43,6 +43,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        let useDef = NSUserDefaults.standardUserDefaults()
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), { () -> Void in
+            while(true){
+                println("Checando atualizações...")
+                GitSearch.autoUpdate(useDef.valueForKey("username") as! String)
+                
+                //intervalo para auto-updates em segundos, colocar o mesmo la no gitsearch.autoupdate
+                NSThread.sleepForTimeInterval(30)
+            }
+        })
         
     }
 
